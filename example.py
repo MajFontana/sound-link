@@ -8,10 +8,10 @@ import matplotlib
 import threading
 import math
 
-SAMP_RATE = 44100
+SAMP_RATE = 48000
 CENTER = 800
 DEV = 190
-BAUD = 40
+BAUD = 100
 
 audio = AudioIO(2, SAMP_RATE, 1, 1024)
 
@@ -19,8 +19,8 @@ inp = GracefulInputBuffer()
 resamp = NearestNeighbourResampler(SAMP_RATE / BAUD)
 mod = SineFrequencyModulator(CENTER, DEV, SAMP_RATE, True)
 
-demod = FrequencyDemodulator(CENTER, DEV, 2 * (2 * DEV), 2 * CENTER - 2 * DEV, 2 ** 8, SAMP_RATE)
-low = LowPassFilter(BAUD / 2, BAUD / 2, 2 ** 11, SAMP_RATE)
+demod = FrequencyDemodulator(CENTER, DEV, 2 * (2 * DEV), 2 * CENTER - 2 * DEV, 2 ** 12, SAMP_RATE)
+low = LowPassFilter(BAUD / 2, BAUD / 2, 2 ** 12, SAMP_RATE)
 ck = ClockExtractor(BAUD, BAUD * 0.1, 2 ** 13, SAMP_RATE)
 ckdel = Delay((2 ** 12) % (SAMP_RATE // BAUD) + (SAMP_RATE // BAUD // 2))
 samp = ClockedSampler(1024)
@@ -66,7 +66,7 @@ samp.inputs["original"].assignProducer(low.outputs["filtered"])
 samp.inputs["clock"].assignProducer(ckplot.outputs["samples"])
 out.inputs["samples"].assignProducer(samp.outputs["sampled"])
 
-M = b"0.08 kbps :^)"
+M = b"Hello world!"
 
 def producer():
     while True:

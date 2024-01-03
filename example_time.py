@@ -9,9 +9,9 @@ import threading
 import math
 
 SAMP_RATE = 44100
-CENTER = 600#3000
-DEV = 200#600
-BAUD = 160#300
+CENTER = 600#600
+DEV = 200#110#200
+BAUD = 160#80#160
 
 audio = AudioIO(2, SAMP_RATE, 1, 1024)
 
@@ -33,10 +33,10 @@ freqs = [0,
          CENTER + DEV + B * BAUD,
          CENTER + DEV + A * BAUD,
          SAMP_RATE / 2]
-tlow = Filter(freqs, [0, 0, 1, 1, 0, 0, 1, 1, 0, 0], 2 ** 8, SAMP_RATE)
+tlow = Filter(freqs, [0, 0, 1, 1, 0, 0, 1, 1, 0, 0], 2 ** 12, SAMP_RATE)
 
-demod = FrequencyDemodulator(CENTER, DEV, 2 * (2 * DEV), 0.1 * DEV, 2 ** 10, SAMP_RATE)
-low = LowPassFilter(BAUD / 2, BAUD / 2, 2 ** 11, SAMP_RATE)
+demod = FrequencyDemodulator(CENTER, DEV, 2 * (2 * DEV), 0.1 * DEV, 2 ** 12, SAMP_RATE)
+low = LowPassFilter(BAUD / 2, BAUD / 2, 2 ** 12, SAMP_RATE)
 ck = ClockExtractor(BAUD, BAUD * 0.1, 2 ** 13, SAMP_RATE)
 ckdel = Delay((2 ** 12) % (SAMP_RATE // BAUD) + (SAMP_RATE // BAUD // 2))
 samp = ClockedSampler(1024)
@@ -106,8 +106,8 @@ def producer():
             man[2 * i + 1] = not bit
         samples = numpy.array(man) * 2 - 1
         inp.write(samples)
-        #time.sleep(((4 + MN) * 8 * 2) / BAUD + 0)
-        time.sleep(10)
+        time.sleep(((4 + MN) * 8 * 2) / BAUD + 0)
+        #time.sleep(15)
 
 def consumer():
     sync = bitstring.Bits(length=16, uint=0xC1FA)

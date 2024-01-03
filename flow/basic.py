@@ -108,6 +108,33 @@ class NearestNeighbourResampler(BaseNode):
 
 
 
+class PulseResampler(BaseNode):
+
+    def __init__(self, output_ratio):
+        super().__init__()
+
+        self.defineInput("original")
+        self.defineOutput("resampled")
+
+        self.index_counter = Clock(output_ratio)
+        self.index_counter.outputs["time"].registerConsumer(self)
+
+        self.current_index = -1
+        self.last_sample = 0
+
+    def work(self, sample_count):
+        counter = self.index_counter.outputs["time"].read(sample_count, self)
+        indices = numpy.round(counter).astype(numpy.int64) - self.current_index
+        input_amount = max(indices)
+        new_samples = self.inputs["original"].read(input_amount)
+        original = numpy.insert(new_samples, 0, self.last_sample)
+        self.last_sample = original[-1]
+        self.current_index += input_amount
+        resampled = numpy.take(original, indices)
+        self.outputs["resampled"].write(resampled)
+
+
+
 class GracefulInputBuffer(BaseNode):
 
     def __init__(self):
