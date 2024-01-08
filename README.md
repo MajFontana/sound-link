@@ -2,9 +2,6 @@
 
 A Python project for digital communication over sound.
 
-<video controls>
-  <source src="docs/videos/example-transmission.mp4" type="video/mp4">
-  An example transmission
-</video>
+https://github.com/MajFontana/sound-link/assets/48356730/0128e5af-31dd-42b4-abed-6717fc43d26e
 
 *An example transmission*
